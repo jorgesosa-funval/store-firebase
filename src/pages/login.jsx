@@ -1,24 +1,28 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth' 
+import { app } from '../libs/firebase'
 
 export default function Login() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
+  const navigate = useNavigate()
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Lógica de autenticación aquí
-    console.log('Login data:', formData)
-  }
+    const formData = new FormData(e.target)
+    const { email, password } = Object.fromEntries(formData.entries());
+
+    try {
+      const auth = getAuth(app)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user 
+
+      if (user) {
+        navigate('/')
+      }
+
+    } catch (error) {
+      console.error('Error logging in:', error)
+    }
+  } 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -37,8 +41,6 @@ export default function Login() {
               type="email"
               id="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="tu@email.com"
@@ -53,22 +55,13 @@ export default function Login() {
               type="password"
               id="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="••••••••"
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="ml-2 text-sm text-gray-600">Recordarme</span>
-            </label>
+          <div className="flex items-center justify-end">
             <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
               ¿Olvidaste tu contraseña?
             </a>
