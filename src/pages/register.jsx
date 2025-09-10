@@ -1,28 +1,34 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { doc, setDoc, getFirestore } from 'firebase/firestore'
+import { app } from '../libs/firebase'
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    password: '',
-    confirmPassword: ''
-  })
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const handleSubmit = (e) => {
+  const navigate = useNavigate()
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Lógica de registro aquí
-    console.log('Register data:', formData)
+    const formData = new FormData(e.target)
+    const { email, password, ...rest } = Object.fromEntries(formData.entries())
+    const auth = getAuth(app)
+    const db = getFirestore(app)
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+      await setDoc(doc(db, 'users', user.uid), {
+        email,
+        ...rest,
+        uid: user.uid,
+        createdAt: new Date()
+      })
+
+      if (user) {
+        navigate('/login')
+      }
+
+    } catch (error) {
+      console.error('Error registering user:', error)
+    }
   }
 
   return (
@@ -43,8 +49,6 @@ export default function Register() {
                 type="text"
                 id="firstName"
                 name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Juan"
@@ -59,8 +63,6 @@ export default function Register() {
                 type="text"
                 id="lastName"
                 name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Pérez"
@@ -76,8 +78,6 @@ export default function Register() {
               type="email"
               id="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="juan@email.com"
@@ -92,8 +92,6 @@ export default function Register() {
               type="tel"
               id="phone"
               name="phone"
-              value={formData.phone}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="+1 234 567 8900"
@@ -107,8 +105,6 @@ export default function Register() {
             <textarea
               id="address"
               name="address"
-              value={formData.address}
-              onChange={handleChange}
               required
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
@@ -124,15 +120,13 @@ export default function Register() {
               type="password"
               id="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="••••••••"
             />
           </div>
 
-          <div>
+          {/* <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
               Confirmar Contraseña
             </label>
@@ -140,13 +134,11 @@ export default function Register() {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="••••••••"
             />
-          </div>
+          </div> */}
 
           <div className="flex items-center">
             <input
