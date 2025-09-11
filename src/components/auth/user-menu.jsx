@@ -1,18 +1,42 @@
 import { getAuth } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 
 export const UserMenu = ({ userData }) => {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("touchstart", handleClickOutside);
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
 
     const handleLogout = async () => {
         const auth = getAuth();
         await auth.signOut();
         navigate('/');
     }
+    
     return (
-        <li className='relative'>
+        <li className='relative' ref={menuRef}>
             <button
                 className='font-semibold flex items-center focus:outline-none'
                 onClick={() => setOpen(!open)}
