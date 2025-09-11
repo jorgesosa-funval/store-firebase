@@ -3,14 +3,10 @@ import NewProduct from '../components/products/new-product'
 import { collection, addDoc, getFirestore, getDocs } from 'firebase/firestore'
 import ProductTable from '../components/products/product-table'
 export default function Admin() {
-  const [showModal, setShowModal] = useState(false)
-  const [editingProduct, setEditingProduct] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-
+  const [refreshKey, setRefreshKey] = useState(null)
   // Datos simulados de productos
   const [productos, setProductos] = useState()
- 
- 
 
   const handleDelete = (id) => {
     if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
@@ -22,13 +18,11 @@ export default function Admin() {
     const db = getFirestore();
     try {
       const docRef = await addDoc(collection(db, "products"), productData)
-      console.log("Document written with ID: ", docRef.id);
+      setRefreshKey(docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   }
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -49,7 +43,7 @@ export default function Admin() {
         </div>
 
         {/* Estadísticas */}
-     {/*    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/*    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -124,7 +118,9 @@ export default function Admin() {
         </div>
 
         {/* Tabla de productos */}
-        <ProductTable />
+        <ProductTable 
+          refreshKey={refreshKey}
+        />
       </div>
     </div>
   )

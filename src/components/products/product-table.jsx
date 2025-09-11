@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { collection, getFirestore, getDocs } from 'firebase/firestore'
-export default function ProductTable({ searchTerm = '' }) {
+export default function ProductTable({ searchTerm = '', refreshKey }) {
     const [products, setProducts] = React.useState([])
 
     const productosFiltrados = products.filter(product =>
@@ -18,7 +18,7 @@ export default function ProductTable({ searchTerm = '' }) {
             setProducts(productsList);
         }
         fetchProducts();
-    }, [])
+    }, [refreshKey])
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
