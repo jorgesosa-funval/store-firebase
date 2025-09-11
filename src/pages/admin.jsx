@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import NewProduct from '../components/products/new-product'
-import { collection, addDoc, getFirestore, getDocs } from 'firebase/firestore'
+import { collection, addDoc, getFirestore, deleteDoc, doc } from 'firebase/firestore'
 import ProductTable from '../components/products/product-table'
 export default function Admin() {
   const [searchTerm, setSearchTerm] = useState('')
   const [refreshKey, setRefreshKey] = useState(null)
-  // Datos simulados de productos
-  const [productos, setProductos] = useState()
+ 
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      setProductos(productos.filter(p => p.id !== id))
+      const db = getFirestore();
+      await deleteDoc(doc(db, "products", id));
+      setRefreshKey(id);
     }
   }
 
@@ -40,66 +41,7 @@ export default function Admin() {
               action={addProduct}
             />
           </div>
-        </div>
-
-        {/* Estadísticas */}
-        {/*    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Productos</p>
-                <p className="text-3xl font-bold text-gray-900">{productos.length}</p>
-              </div>
-              <div className="bg-blue-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Productos Activos</p>
-                <p className="text-3xl font-bold text-green-600">{productos.filter(p => p.estado === 'Activo').length}</p>
-              </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Agotados</p>
-                <p className="text-3xl font-bold text-red-600">{productos.filter(p => p.estado === 'Agotado').length}</p>
-              </div>
-              <div className="bg-red-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Stock Total</p>
-                <p className="text-3xl font-bold text-purple-600">{productos.reduce((sum, p) => sum + p.stock, 0)}</p>
-              </div>
-              <div className="bg-purple-100 p-3 rounded-full">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div> */}
+        </div> 
 
         {/* Barra de búsqueda */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -120,6 +62,7 @@ export default function Admin() {
         {/* Tabla de productos */}
         <ProductTable 
           refreshKey={refreshKey}
+          deleteProduct={handleDelete}
         />
       </div>
     </div>

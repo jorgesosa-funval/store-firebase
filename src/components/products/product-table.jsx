@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { collection, getFirestore, getDocs } from 'firebase/firestore'
-export default function ProductTable({ searchTerm = '', refreshKey }) {
+export default function ProductTable({ searchTerm = '', refreshKey, deleteProduct }) {
     const [products, setProducts] = React.useState([])
 
     const productosFiltrados = products.filter(product =>
@@ -10,8 +10,7 @@ export default function ProductTable({ searchTerm = '', refreshKey }) {
     useEffect(() => {
         const fetchProducts = async () => {
             const db = getFirestore();
-            const productsSnapshot = await getDocs(collection(db, 'products'));
-            console.log(productsSnapshot);
+            const productsSnapshot = await getDocs(collection(db, 'products')); 
             const productsList = productsSnapshot.docs.map(doc =>
                 ({ id: doc.id, ...doc.data() })
             );
@@ -67,7 +66,7 @@ export default function ProductTable({ searchTerm = '', refreshKey }) {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex space-x-2">
                                         <button
-                                            /* onClick={() => handleDelete(producto.id)} */
+                                            onClick={() => deleteProduct(id)}
                                             className="text-red-600 hover:text-red-900 transition-colors"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
