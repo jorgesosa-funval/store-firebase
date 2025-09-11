@@ -21,7 +21,6 @@ export default function Home() {
     const fetchProducts = async () => {
       const db = getFirestore();
       const productsSnapshot = await getDocs(collection(db, 'products'));
-      console.log(productsSnapshot);
       const productsList = productsSnapshot.docs.map(doc =>
         ({ id: doc.id, ...doc.data() })
       );
