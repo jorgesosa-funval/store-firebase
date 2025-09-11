@@ -1,11 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
-import Home from './pages/Home'
-import Login from './pages/Login' 
-import Profile from './pages/Profile' 
-import AppLayout from './components/layout/app-layout'
-import Admin from './pages/admin'
-import Register from './pages/register' 
-import { app } from './libs/firebase'
+import AppLayout from './components/layout/app-layout' 
+import { Home, Login, Profile, Admin, Register } from './pages'
 
 export default function App() {
   return (

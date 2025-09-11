@@ -1,30 +1,10 @@
-import { Link, Outlet } from 'react-router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { Link, Outlet } from 'react-router'; 
 import { createContext, useEffect, useState } from 'react';
 import { UserMenu } from '../auth/user-menu';
 export const UserContext = createContext(null);
 export default function AppLayout() {
     const [userData, setUserData] = useState(null);
-
-    useEffect(() => {
-        const auth = getAuth();
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Usar datos básicos del usuario de Firebase Auth en lugar de Firestore
-                setUserData({
-                    name: user.displayName || user.email.split('@')[0],
-                    email: user.email,
-                    role: 'user' // rol por defecto
-                });
-            } else {
-                setUserData(null);
-            }
-        });
-        return () => unsubscribe();
-    }, []);
-
-
-
+ 
     return (
         <UserContext.Provider value={userData}>
             <div className='w-full min-h-screen flex flex-col'>
