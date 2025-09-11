@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from 'react-router';
+import { Link, Outlet } from 'react-router';
 import { getFirestore, getDoc, doc } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'; 
