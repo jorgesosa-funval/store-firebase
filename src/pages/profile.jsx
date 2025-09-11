@@ -1,31 +1,23 @@
-import React, { useState } from 'react'
+import  { useContext, useState } from 'react'
+import { UserContext } from '../components/layout/app-layout'
 
 export default function Profile() {
+  const {
+    firstName = "",
+    email = "",
+    lastName = "",
+    phone = "",
+    address = ""
+  } = useContext(UserContext) || {}
+
   const [activeTab, setActiveTab] = useState('profile')
   const [isEditing, setIsEditing] = useState(false)
-  
-  // Datos simulados del usuario
-  const [profileData, setProfileData] = useState({
-    firstName: 'Juan',
-    lastName: 'Pérez',
-    email: 'juan@email.com',
-    phone: '+1 234 567 8900',
-    address: 'Calle 123, Ciudad, País',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400'
-  })
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
-
-  const handleProfileChange = (e) => {
-    setProfileData({
-      ...profileData,
-      [e.target.name]: e.target.value
-    })
-  }
 
   const handlePasswordChange = (e) => {
     setPasswordData({
@@ -34,13 +26,13 @@ export default function Profile() {
     })
   }
 
-  const handleProfileSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault()
-    // Lógica para actualizar perfil
-    console.log('Profile updated:', profileData)
-    setIsEditing(false)
+    const formData = new FormData(e.target)
+    const profileData = Object.fromEntries(formData.entries())
+    console.log({profileData} )
   }
-
+  
   const handlePasswordSubmit = (e) => {
     e.preventDefault()
     // Lógica para cambiar contraseña
@@ -60,7 +52,7 @@ export default function Profile() {
           <div className="flex items-center space-x-6">
             <div className="relative">
               <img
-                src={profileData.avatar}
+                src={avatar}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover border-4 border-blue-500"
               />
@@ -72,8 +64,8 @@ export default function Profile() {
               </button>
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900">{profileData.firstName} {profileData.lastName}</h1>
-              <p className="text-gray-600">{profileData.email}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{firstName} {lastName}</h1>
+              <p className="text-gray-600">{email}</p>
               <div className="mt-4 flex space-x-4">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                   Usuario Activo
@@ -92,21 +84,19 @@ export default function Profile() {
             <nav className="flex space-x-8 px-6">
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'profile'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'profile'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 Información Personal
               </button>
               <button
                 onClick={() => setActiveTab('password')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'password'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'password'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
               >
                 Cambiar Contraseña
               </button>
@@ -138,12 +128,11 @@ export default function Profile() {
                       <input
                         type="text"
                         name="firstName"
-                        value={profileData.firstName}
-                        onChange={handleProfileChange}
+                        defaultValue={firstName}
+
                         disabled={!isEditing}
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          !isEditing ? 'bg-gray-50 text-gray-500' : ''
-                        }`}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${!isEditing ? 'bg-gray-50 text-gray-500' : ''
+                          }`}
                       />
                     </div>
 
@@ -154,12 +143,11 @@ export default function Profile() {
                       <input
                         type="text"
                         name="lastName"
-                        value={profileData.lastName}
-                        onChange={handleProfileChange}
+                        defaultValue={lastName}
+
                         disabled={!isEditing}
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          !isEditing ? 'bg-gray-50 text-gray-500' : ''
-                        }`}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${!isEditing ? 'bg-gray-50 text-gray-500' : ''
+                          }`}
                       />
                     </div>
                   </div>
@@ -172,7 +160,7 @@ export default function Profile() {
                       <input
                         type="email"
                         name="email"
-                        value={profileData.email}
+                        defaultValue={email}
                         disabled
                         className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                       />
@@ -192,12 +180,10 @@ export default function Profile() {
                     <input
                       type="tel"
                       name="phone"
-                      value={profileData.phone}
-                      onChange={handleProfileChange}
+                      defaultValue={phone}
                       disabled={!isEditing}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        !isEditing ? 'bg-gray-50 text-gray-500' : ''
-                      }`}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${!isEditing ? 'bg-gray-50 text-gray-500' : ''
+                        }`}
                     />
                   </div>
 
@@ -207,13 +193,10 @@ export default function Profile() {
                     </label>
                     <textarea
                       name="address"
-                      value={profileData.address}
-                      onChange={handleProfileChange}
+                      defaultValue={address}
                       disabled={!isEditing}
                       rows={3}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                        !isEditing ? 'bg-gray-50 text-gray-500' : ''
-                      }`}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${!isEditing ? 'bg-gray-50 text-gray-500' : ''}`}
                     />
                   </div>
 
@@ -241,7 +224,7 @@ export default function Profile() {
             {activeTab === 'password' && (
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Cambiar Contraseña</h2>
-                
+
                 <form onSubmit={handlePasswordSubmit} className="max-w-md space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -250,7 +233,7 @@ export default function Profile() {
                     <input
                       type="password"
                       name="currentPassword"
-                      value={passwordData.currentPassword}
+                      defaultValue={passwordData.currentPassword}
                       onChange={handlePasswordChange}
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -265,7 +248,7 @@ export default function Profile() {
                     <input
                       type="password"
                       name="newPassword"
-                      value={passwordData.newPassword}
+                      defaultValue={passwordData.newPassword}
                       onChange={handlePasswordChange}
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -280,7 +263,7 @@ export default function Profile() {
                     <input
                       type="password"
                       name="confirmPassword"
-                      value={passwordData.confirmPassword}
+                      defaultValue={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -321,3 +304,4 @@ export default function Profile() {
     </div>
   )
 }
+const avatar = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400'

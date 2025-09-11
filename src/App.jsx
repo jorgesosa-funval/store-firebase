@@ -4,7 +4,8 @@ import Login from './pages/Login'
 import Profile from './pages/Profile' 
 import AppLayout from './components/layout/app-layout'
 import Admin from './pages/admin'
-import Register from './pages/register'
+import Register from './pages/register' 
+import { app } from './libs/firebase'
 
 export default function App() {
   return (
