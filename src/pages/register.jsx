@@ -1,4 +1,7 @@
 import { Link, useNavigate } from 'react-router';
+import { auth, db } from '../libs/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function Register() {
   const navigate = useNavigate()
@@ -6,14 +9,17 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const { email, password, firstName, lastName, ...rest } = Object.fromEntries(formData.entries()) 
-
-    try { 
-
-      /* if (user) {
+    const { email, password, ...rest } = Object.fromEntries(formData.entries())
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', user.uid), {
+        ...rest,
+        uid: user.uid,
+        email
+      })
+      if (user) {
         navigate('/login')
-      } */
-
+      } 
     } catch (error) {
       console.error('Error registering user:', error)
     }
@@ -112,7 +118,7 @@ export default function Register() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="••••••••"
             />
-          </div>  
+          </div>
 
           <button
             type="submit"
