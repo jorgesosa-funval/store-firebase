@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router'
-import { signInWithEmailAndPassword, getAuth } from 'firebase/auth' 
-import { app } from '../libs/firebase'
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -11,7 +10,7 @@ export default function Login() {
     const { email, password } = Object.fromEntries(formData.entries());
 
     try {
-      const auth = getAuth(app)
+      const auth = getAuth()
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user 
 

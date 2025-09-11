@@ -1,7 +1,6 @@
-import { Link, useNavigate } from 'react-router'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc, getFirestore } from 'firebase/firestore'
-import { app } from '../libs/firebase'
+import { Link, useNavigate } from 'react-router';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getFirestore } from 'firebase/firestore'; 
 
 export default function Register() {
   const navigate = useNavigate()
@@ -10,8 +9,8 @@ export default function Register() {
     e.preventDefault()
     const formData = new FormData(e.target)
     const { email, password, ...rest } = Object.fromEntries(formData.entries())
-    const auth = getAuth(app)
-    const db = getFirestore(app)
+    const auth = getAuth()
+    const db = getFirestore()
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
