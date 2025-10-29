@@ -11,8 +11,7 @@ export default function AppLayout() {
             const user = auth.currentUser;
             if (user) {
                 const response = await getDoc(doc(db, 'users', user.uid));
-                if (response.exists()) {
-                    console.log(response.data());
+                if (response.exists()) { 
                     setUserData(response.data());
                 }else{
                     setUserData(null);
