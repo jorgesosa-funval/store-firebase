@@ -1,9 +1,26 @@
 import { Link, Outlet } from 'react-router'; 
 import { createContext, useEffect, useState } from 'react';
 import { UserMenu } from '../auth/user-menu';
+import { auth, db } from '../../libs/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 export const UserContext = createContext(null);
 export default function AppLayout() {
     const [userData, setUserData] = useState(null);
+    useEffect(() => {
+        const getUser = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const response = await getDoc(doc(db, 'users', user.uid));
+                if (response.exists()) {
+                    console.log(response.data());
+                    setUserData(response.data());
+                }else{
+                    setUserData(null);
+                }
+            }
+        }
+        getUser();
+    }, []);
  
     return (
         <UserContext.Provider value={userData}>

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router' 
-
+import { auth } from '../libs/firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 export default function Login() {
   const navigate = useNavigate()
 
@@ -9,11 +10,11 @@ export default function Login() {
     const { email, password } = Object.fromEntries(formData.entries());
 
     try {
- 
+      const {user} = await signInWithEmailAndPassword(auth, email, password);
 
-      /* if (user) {
+      if (user) {
         navigate('/')
-      } */
+      }
 
     } catch (error) {
       console.error('Error logging in:', error)

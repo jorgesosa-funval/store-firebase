@@ -30,8 +30,6 @@ export const UserMenu = ({ userData }) => {
     }, []);
 
     const handleLogout = async () => {
-        const auth = getAuth();
-        await auth.signOut();
         navigate('/');
     }
     
