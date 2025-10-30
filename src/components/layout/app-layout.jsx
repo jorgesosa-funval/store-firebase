@@ -1,26 +1,29 @@
-import { Link, Outlet } from 'react-router'; 
+import { Link, Outlet } from 'react-router';
 import { createContext, useEffect, useState } from 'react';
 import { UserMenu } from '../auth/user-menu';
 import { auth, db } from '../../libs/firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 export const UserContext = createContext(null);
 export default function AppLayout() {
     const [userData, setUserData] = useState(null);
     useEffect(() => {
-        const getUser = async () => {
-            const user = auth.currentUser;
+        const getUser = onAuthStateChanged(auth, async (user) => {
+
             if (user) {
                 const response = await getDoc(doc(db, 'users', user.uid));
-                if (response.exists()) { 
+                if (response.exists()) {
                     setUserData(response.data());
-                }else{
+                } else {
                     setUserData(null);
                 }
+            } else {
+                setUserData(null);
             }
-        }
-        getUser();
+        })
+        return ()=> getUser();
     }, []);
- 
+
     return (
         <UserContext.Provider value={userData}>
             <div className='w-full min-h-screen flex flex-col'>
