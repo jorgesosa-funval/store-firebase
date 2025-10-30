@@ -1,6 +1,6 @@
-import { getAuth } from "firebase/auth";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
+import { auth } from "../../libs/firebase";
 
 export const UserMenu = ({ userData }) => {
     const [open, setOpen] = useState(false);
@@ -30,6 +30,7 @@ export const UserMenu = ({ userData }) => {
     }, []);
 
     const handleLogout = async () => {
+        await auth.signOut()
         navigate('/');
     }
     
